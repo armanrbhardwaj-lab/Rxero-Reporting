@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R XERO Report Workspace</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span>R</span><div>R XERO<small>REPORTING SYSTEM</small></div></div>
+    <nav>
+      <button class="nav active" data-view="dashboard">▦ <span>Dashboard</span></button>
+      <button class="nav" data-view="clients">◉ <span>Clients</span></button>
+      <button class="nav" data-view="reports">▤ <span>Reports</span></button>
+      <button class="nav" data-view="activity">◷ <span>Activity</span></button>
+    </nav>
+    <div class="side-bottom">
+      <div class="sync"><i></i><span>Portal Sync</span><b>LIVE</b></div>
+      <div class="user"><div class="avatar">AR</div><div><strong>Reporting Team</strong><small>Administrator</small></div></div>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">R XERO REPORT</div>
+        <h1 id="pageTitle">Reporting Workspace</h1>
+      </div>
+      <div class="top-actions">
+        <div class="search">⌕ <input id="globalSearch" placeholder="Search clients or reports"></div>
+        <button class="icon-btn" title="Notifications">♢</button>
+        <button class="profile">AR</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="hero">
+        <div><h2>Daily Reporting Control Center</h2><p>Upload once. Publish automatically to the client's portal.</p></div>
+        <button class="primary" onclick="openUpload()">＋ Add Report</button>
+      </div>
+
+      <div class="kpis">
+        <div class="card kpi"><span>Active Clients</span><strong id="kClients">3</strong><small>All client folders</small></div>
+        <div class="card kpi"><span>Reports Today</span><strong id="kReports">8</strong><small>Uploaded & published</small></div>
+        <div class="card kpi"><span>Pending</span><strong id="kPending">2</strong><small>Waiting for upload</small></div>
+        <div class="card kpi"><span>Portal Sync</span><strong>100%</strong><small>Last sync just now</small></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-head"><div><h3>Client Reporting Folders</h3><p>Open a client workspace to manage reports.</p></div><button class="ghost" onclick="showView('clients')">View all</button></div>
+          <div id="clientCards" class="client-list"></div>
+        </div>
+        <div class="card">
+          <div class="section-head"><div><h3>Today's Upload Activity</h3><p>Latest reports added by the team.</p></div></div>
+          <div id="activityList"></div>
+        </div>
+      </div>
+
+      <div class="card flow-card">
+        <div class="section-head"><div><h3>Automatic Portal Flow</h3><p>The demo simulates the complete workflow.</p></div></div>
+        <div class="flow">
+          <div><b>01</b><strong>Team Upload</strong><span>Excel / PDF / CSV</span></div><em>→</em>
+          <div><b>02</b><strong>R XERO</strong><span>Store & process</span></div><em>→</em>
+          <div><b>03</b><strong>Publish</strong><span>Auto sync</span></div><em>→</em>
+          <div><b>04</b><strong>Client Portal</strong><span>Report available</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="clients" class="view">
+      <div class="page-head"><div><h2>Client Folders</h2><p>Each client has an isolated reporting workspace.</p></div><button class="primary" onclick="openClient()">＋ Create Client</button></div>
+      <div id="allClients" class="clients-grid"></div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="page-head"><div><h2>Report Center</h2><p>All uploaded reports across client folders.</p></div><button class="primary" onclick="openUpload()">＋ Add Report</button></div>
+      <div class="card table-wrap">
+        <table><thead><tr><th>Report</th><th>Client</th><th>Date</th><th>Type</th><th>Status</th><th>Portal</th></tr></thead>
+        <tbody id="reportTable"></tbody></table>
+      </div>
+    </section>
+
+    <section id="activity" class="view">
+      <div class="page-head"><div><h2>Activity Log</h2><p>Track uploads and automatic portal publishing.</p></div></div>
+      <div class="card" id="fullActivity"></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="uploadModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('uploadModal')">×</button>
+    <h2>Add Report</h2><p>Upload a report into a client's R XERO folder.</p>
+    <label>Client Folder</label><select id="uClient"></select>
+    <label>Report Type</label><select id="uType"><option>Daily Sales Report</option><option>Monthly Sales Report</option><option>Purchase Report</option><option>Profit & Loss</option><option>Variance Report</option><option>Stock Report</option></select>
+    <label>Report Date</label><input id="uDate" type="date">
+    <label>Report File</label><div class="drop"><input id="uFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><span id="fileName">Choose Excel / CSV / PDF</span></div>
+    <label>Remarks</label><textarea id="uRemark" placeholder="Optional remarks..."></textarea>
+    <button class="primary full" onclick="uploadReport()">Upload & Publish</button>
+    <div class="note">Demo mode: no real database/storage is connected yet.</div>
+  </div>
+</div>
+
+<div class="modal" id="clientModal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal('clientModal')">×</button>
+    <h2>Create Client Folder</h2><p>Create the client workspace and login identity.</p>
+    <label>Company / Client Name</label><input id="cName" placeholder="e.g. Kundan Mishthan Bhandar">
+    <label>Client ID</label><input id="cId" placeholder="e.g. KMB001">
+    <label>Login Email</label><input id="cEmail" placeholder="client@email.com">
+    <button class="primary full" onclick="createClient()">Create Client</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
