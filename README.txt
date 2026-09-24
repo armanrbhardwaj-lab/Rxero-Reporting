@@ -1,13 +1,23 @@
-R XERO Team + Client Portal Demo
+R XERO — TEAM REPORT PORTAL V1
 
-Open index.html.
+Purpose
+This version is ONLY the Reporting Team Portal. No sample client name or sample report has been added.
 
-Demo:
-1. Team portal opens first.
-2. Client Folders -> create client.
-3. Add Report -> select client -> choose file -> UPLOAD & AUTO PUBLISH.
-4. Click Client Portal.
-5. Login with KMB001 / demo123.
-6. The uploaded report is visible in that client's portal.
+Workflow
+1. Open Clients.
+2. Click Add Client and manually enter Client Name + Client ID.
+3. Open Create Report.
+4. Select the manually-created client.
+5. Enter Report Name, Type and Report Date.
+6. Upload the report file.
+7. Manually enter the Report Header: Title, Subtitle, Period, Location, Prepared By and Note.
+8. Review Header Preview.
+9. Click Upload & Publish Report.
+10. The report appears in the Team Report Center.
 
-This is a frontend prototype. Real Supabase authentication, storage, database and secure tenant isolation are the next implementation step.
+Current prototype behavior
+- Data is stored in browser localStorage for demonstration.
+- No sample client is preloaded.
+- No client portal is included in this version.
+- No real authentication, Supabase, cloud storage or automatic client publishing is connected yet.
+- Next development step can connect this exact workflow to Supabase and then build the separate Client Portal.

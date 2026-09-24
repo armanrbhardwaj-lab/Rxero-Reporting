@@ -1,13 +1,78 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>R XERO — Team & Client Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R XERO — Team Report Portal</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app"></div>
-<div id="toast"></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">RX</div><div><strong>R XERO</strong><span>TEAM PORTAL</span></div></div>
+    <nav>
+      <button class="nav active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+      <button class="nav" data-view="clients">▣ <span>Clients</span></button>
+      <button class="nav" data-view="reports">▤ <span>Reports</span></button>
+      <button class="nav" data-view="create">＋ <span>Create Report</span></button>
+      <button class="nav" data-view="activity">◷ <span>Activity</span></button>
+    </nav>
+    <div class="side-note"><b>Team Workspace</b><p>Create clients manually, upload reports, add the report header, and publish.</p></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">R XERO REPORTING SOFTWARE</div><h1 id="pageTitle">Team Dashboard</h1></div>
+      <div class="top-actions"><span class="status"><i></i> Team Portal</span><button class="outline" data-view="create">+ Create Report</button></div>
+    </header>
+
+    <section id="dashboard" class="view active-view">
+      <div class="welcome"><div><span class="eyebrow">REPORT WORKSPACE</span><h2>Manage your reporting workflow</h2><p>Clients are added manually by your team. Reports are uploaded and published from this portal.</p></div><button class="primary" data-view="create">Create New Report</button></div>
+      <div class="kpis"><div class="kpi"><span>Total Clients</span><strong id="kpiClients">0</strong><small>Manually added</small></div><div class="kpi"><span>Total Reports</span><strong id="kpiReports">0</strong><small>Uploaded reports</small></div><div class="kpi"><span>Published</span><strong id="kpiPublished">0</strong><small>Available to clients</small></div><div class="kpi"><span>Today</span><strong id="kpiToday">0</strong><small>Reports created today</small></div></div>
+      <div class="grid two"><div class="panel"><div class="panel-head"><div><h3>Recent Reports</h3><p>Latest report activity</p></div><button class="text-btn" data-view="reports">View all</button></div><div id="recentReports" class="empty">No reports yet. Create your first report.</div></div><div class="panel"><div class="panel-head"><div><h3>Quick Actions</h3><p>Start a reporting task</p></div></div><div class="quick"><button data-view="clients"><b>＋</b><span><strong>Add Client</strong><small>Create a client workspace manually</small></span></button><button data-view="create"><b>↑</b><span><strong>Create Report</strong><small>Upload a report and add header</small></span></button><button data-view="reports"><b>▤</b><span><strong>Report Center</strong><small>Review uploaded reports</small></span></button></div></div></div>
+    </section>
+
+    <section id="clients" class="view">
+      <div class="section-head"><div><span class="eyebrow">CLIENT WORKSPACES</span><h2>Clients</h2><p>Add your clients manually. No sample client is included.</p></div><button class="primary" id="addClientBtn">+ Add Client</button></div>
+      <div id="clientList" class="client-grid"><div class="empty large"><div class="empty-icon">＋</div><h3>No clients added</h3><p>Add your first client to start creating reports.</p><button class="primary" id="emptyAddClient">Add Client</button></div></div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="section-head"><div><span class="eyebrow">REPORT CENTER</span><h2>Reports</h2><p>All reports created by your reporting team.</p></div><button class="primary" data-view="create">+ Create Report</button></div>
+      <div class="toolbar"><input id="reportSearch" placeholder="Search reports..."/><select id="reportFilter"><option value="all">All Status</option><option value="draft">Draft</option><option value="published">Published</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>Report</th><th>Client</th><th>Period</th><th>Location</th><th>Status</th><th>Created</th></tr></thead><tbody id="reportTable"><tr><td colspan="6" class="empty">No reports available.</td></tr></tbody></table></div>
+    </section>
+
+    <section id="create" class="view">
+      <div class="section-head"><div><span class="eyebrow">REPORT BUILDER</span><h2>Create Report</h2><p>Upload the report first, then manually enter the report header information.</p></div></div>
+      <div class="stepper"><div class="step active"><b>01</b><span>Report Details</span></div><div class="line"></div><div class="step"><b>02</b><span>Upload Report</span></div><div class="line"></div><div class="step"><b>03</b><span>Manual Header</span></div><div class="line"></div><div class="step"><b>04</b><span>Publish</span></div></div>
+      <form id="reportForm" class="builder">
+        <div class="panel"><div class="panel-head"><div><h3>1. Report Details</h3><p>Select the client and define the report.</p></div></div><div class="form-grid">
+          <label>Client <select id="clientSelect" required><option value="">Select client</option></select></label>
+          <label>Report Name <input id="reportName" required placeholder="e.g. Daily Sales Report"></label>
+          <label>Report Type <select id="reportType"><option>Daily Report</option><option>Monthly Report</option><option>Variance Report</option><option>Sales Report</option><option>Purchase Report</option><option>Stock Report</option><option>Other</option></select></label>
+          <label>Report Date <input id="reportDate" type="date" required></label>
+        </div></div>
+        <div class="panel"><div class="panel-head"><div><h3>2. Upload Report</h3><p>Upload the report file that your team has prepared.</p></div></div><label class="dropzone" id="dropzone"><input id="reportFile" type="file" accept=".xlsx,.xls,.csv,.pdf,.html,.png,.jpg,.jpeg"><div class="upload-icon">↑</div><strong>Choose report file</strong><span>Excel, CSV, PDF, HTML or image</span><em id="fileName">No file selected</em></label></div>
+        <div class="panel"><div class="panel-head"><div><h3>3. Add Report Header Manually</h3><p>This information will appear at the top of the client report.</p></div></div><div class="form-grid">
+          <label>Header Title <input id="headerTitle" required placeholder="Enter report header title"></label>
+          <label>Header Subtitle <input id="headerSubtitle" placeholder="Enter subtitle / report description"></label>
+          <label>Period From <input id="periodFrom" type="date"></label>
+          <label>Period To <input id="periodTo" type="date"></label>
+          <label>Location <input id="location" placeholder="All Locations / Outlet / Factory"></label>
+          <label>Prepared By <input id="preparedBy" placeholder="Team member name"></label>
+          <label class="full">Header Note <textarea id="headerNote" rows="3" placeholder="Optional note shown with the report header"></textarea></label>
+        </div></div>
+        <div class="panel preview-panel"><div class="panel-head"><div><h3>Header Preview</h3><p>Preview the manual header before publishing.</p></div></div><div id="headerPreview" class="report-header-preview"><span>REPORT HEADER</span><h2>Your Report Title</h2><p>Subtitle will appear here</p><div><b>Period:</b> — &nbsp; <b>Location:</b> —</div></div></div>
+        <div class="form-actions"><button type="button" class="outline" id="saveDraft">Save Draft</button><button type="submit" class="primary">Upload & Publish Report</button></div>
+      </form>
+    </section>
+
+    <section id="activity" class="view"><div class="section-head"><div><span class="eyebrow">WORKSPACE LOG</span><h2>Activity</h2><p>Track report creation and client workspace changes.</p></div></div><div id="activityList" class="activity-list"><div class="empty large">No activity yet.</div></div></section>
+  </main>
+</div>
+<div id="modal" class="modal"><div class="modal-card"><button class="close" id="closeModal">×</button><h2>Add Client</h2><p>Create the client workspace manually.</p><form id="clientForm"><label>Client Name<input id="newClientName" required placeholder="Enter client name"></label><label>Client ID<input id="newClientId" required placeholder="Enter client ID"></label><label>Notes<textarea id="newClientNotes" rows="3" placeholder="Optional notes"></textarea></label><button class="primary" type="submit">Create Client</button></form></div></div>
+<div id="toast" class="toast"></div>
 <script src="app.js"></script>
 </body>
 </html>
