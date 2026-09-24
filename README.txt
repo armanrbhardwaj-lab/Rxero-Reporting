@@ -1,26 +1,13 @@
-# R XERO Reporting Workspace — Demo
+R XERO Team + Client Portal Demo
 
-## Run
-Open `index.html` in Chrome / Edge.
+Open index.html.
 
-## What this demo shows
-- Reporting Team Portal
-- Client folder structure
-- Create Client
-- Add Report
-- Simulated automatic publish to Client Portal
-- Report Center
-- Activity Log
-- Responsive dashboard UI
+Demo:
+1. Team portal opens first.
+2. Client Folders -> create client.
+3. Add Report -> select client -> choose file -> UPLOAD & AUTO PUBLISH.
+4. Click Client Portal.
+5. Login with KMB001 / demo123.
+6. The uploaded report is visible in that client's portal.
 
-## Important
-This is a frontend demo only. It does NOT yet use Supabase, real authentication, real file storage, or real client isolation.
-
-Next development step:
-1. Supabase authentication
-2. Client/company database
-3. Secure file storage
-4. Team upload workflow
-5. Automatic client portal publishing
-6. Excel/CSV data processing
-7. Client portal login
+This is a frontend prototype. Real Supabase authentication, storage, database and secure tenant isolation are the next implementation step.

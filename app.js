@@ -1,72 +1,24 @@
-const state={
- clients:[
-  {id:"KMB001",name:"Kundan Mishthan Bhandar",email:"client@kmb.com",reports:4},
-  {id:"ABC002",name:"ABC Sweets",email:"admin@abcsweets.com",reports:3},
-  {id:"XYZ003",name:"XYZ Foods",email:"reports@xyzfoods.com",reports:1}
- ],
- reports:[
-  {name:"Daily Sales Report",client:"Kundan Mishthan Bhandar",date:"24-Sep-2026",type:"Daily Sales",status:"Published"},
-  {name:"Variance Report",client:"Kundan Mishthan Bhandar",date:"24-Sep-2026",type:"Variance",status:"Published"},
-  {name:"Purchase Report",client:"ABC Sweets",date:"24-Sep-2026",type:"Purchase",status:"Published"},
-  {name:"Monthly Sales Report",client:"Kundan Mishthan Bhandar",date:"23-Sep-2026",type:"Monthly",status:"Published"},
-  {name:"Stock Report",client:"XYZ Foods",date:"24-Sep-2026",type:"Stock",status:"Published"}
- ],
- activity:[
-  ["Daily Sales Report","Kundan Mishthan Bhandar","Just now"],
-  ["Variance Report","Kundan Mishthan Bhandar","12 min ago"],
-  ["Purchase Report","ABC Sweets","28 min ago"],
-  ["Stock Report","XYZ Foods","1 hr ago"]
- ]
-};
-
-function render(){
- document.getElementById("kClients").textContent=state.clients.length;
- document.getElementById("kReports").textContent=state.reports.filter(r=>r.date==="24-Sep-2026").length+3;
- renderClients(); renderActivity(); renderReports(); fillClientSelect();
-}
-function renderClients(){
- const html=state.clients.map(c=>`<div class="client-row" onclick="showToast('Opened ${esc(c.name)} folder')"><div class="folder">▰</div><div><strong>${esc(c.name)}</strong><small>${c.id} · ${esc(c.email)}</small></div><span class="count">${c.reports} reports</span></div>`).join("");
- document.getElementById("clientCards").innerHTML=html;
- document.getElementById("allClients").innerHTML=state.clients.map(c=>`<div class="card client-card"><div class="folder">▰</div><strong>${esc(c.name)}</strong><small>${c.id} · ${esc(c.email)}</small><div class="client-meta"><span>Daily / Monthly / Analytics</span><b>${c.reports} reports</b></div></div>`).join("");
-}
-function renderActivity(){
- document.getElementById("activityList").innerHTML=state.activity.slice(0,5).map(a=>`<div class="activity"><i class="dot"></i><div><strong>${esc(a[0])}</strong><small>${esc(a[1])} · ${a[2]} · <span class="portal">Portal published</span></small></div></div>`).join("");
- document.getElementById("fullActivity").innerHTML=state.activity.concat(state.activity).map(a=>`<div class="activity"><i class="dot"></i><div><strong>${esc(a[0])}</strong><small>${esc(a[1])} · ${a[2]} · <span class="portal">Automatically published to client portal</span></small></div></div>`).join("");
-}
-function renderReports(){
- document.getElementById("reportTable").innerHTML=state.reports.map(r=>`<tr><td><strong>${esc(r.name)}</strong></td><td>${esc(r.client)}</td><td>${r.date}</td><td>${esc(r.type)}</td><td><span class="status">${r.status}</span></td><td class="portal">● Available</td></tr>`).join("");
-}
-function fillClientSelect(){document.getElementById("uClient").innerHTML=state.clients.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("")}
-function showView(id){
- document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.view===id));
- const titles={dashboard:"Reporting Workspace",clients:"Client Folders",reports:"Report Center",activity:"Activity Log"};
- document.getElementById("pageTitle").textContent=titles[id];
-}
-document.querySelectorAll(".nav").forEach(n=>n.onclick=()=>showView(n.dataset.view));
-function openUpload(){document.getElementById("uploadModal").classList.add("show");document.getElementById("uDate").value=new Date().toISOString().slice(0,10)}
-function openClient(){document.getElementById("clientModal").classList.add("show")}
-function closeModal(id){document.getElementById(id).classList.remove("show")}
-document.getElementById("uFile").addEventListener("change",e=>{document.getElementById("fileName").textContent=e.target.files[0]?.name||"Choose Excel / CSV / PDF"});
-function uploadReport(){
- const client=document.getElementById("uClient").value,type=document.getElementById("uType").value,file=document.getElementById("uFile").files[0];
- if(!file){showToast("Please select a report file");return}
- const d=document.getElementById("uDate").value;
- const formatted=new Date(d+"T12:00:00").toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).replaceAll(" ","-");
- state.reports.unshift({name:file.name,client,date:formatted,type,status:"Published"});
- const c=state.clients.find(x=>x.name===client);if(c)c.reports++;
- state.activity.unshift([file.name,client,"Just now"]);
- closeModal("uploadModal");render();showToast("Report uploaded & published to client portal");
-}
-function createClient(){
- const name=document.getElementById("cName").value.trim(),id=document.getElementById("cId").value.trim(),email=document.getElementById("cEmail").value.trim();
- if(!name||!id){showToast("Enter client name and Client ID");return}
- state.clients.push({id,name,email,reports:0});closeModal("clientModal");render();showToast("Client folder created successfully");
-}
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
-function esc(v){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-document.getElementById("globalSearch").addEventListener("input",e=>{
- const q=e.target.value.toLowerCase();document.querySelectorAll(".client-row,.client-card,#reportTable tr").forEach(el=>el.style.display=el.textContent.toLowerCase().includes(q)?"":"none");
-});
+const db={clients:[
+{id:"KMB001",name:"Kundan Mishthan Bhandar",email:"client@kmb.com",reports:[
+{name:"Daily Sales Report",date:"24-Sep-2026",type:"Daily Sales",file:"Daily_Sales_24-09-2026.xlsx"},
+{name:"Variance Report",date:"24-Sep-2026",type:"Variance",file:"Variance_24-09-2026.xlsx"},
+{name:"Monthly Sales Report",date:"23-Sep-2026",type:"Monthly",file:"Monthly_Sales_Sep-2026.xlsx"}]},
+{id:"ABC002",name:"ABC Sweets",email:"admin@abcsweets.com",reports:[
+{name:"Purchase Report",date:"24-Sep-2026",type:"Purchase",file:"Purchase_24-09-2026.xlsx"}]}]};
+let role="team",current=null;
+function login(r){role=r;render()}
+function render(){document.getElementById("app").innerHTML=role==="team"?team():clientLogin()}
+function team(){return `<aside class="side"><div class="brand">R XERO<small>REPORTING PORTAL</small></div><div class="nav"><button class="active" onclick="teamView('dashboard')">▦ Dashboard</button><button onclick="teamView('clients')">◉ Client Folders</button><button onclick="teamView('reports')">▤ All Reports</button><button onclick="teamView('activity')">◷ Activity</button></div><div class="sidebottom">● Portal Sync: LIVE<br><br>Reporting Team<br><small>Administrator</small></div></aside><main class="main"><header class="top"><div><small>R XERO REPORT</small><h1 id="title">Reporting Workspace</h1></div><button class="logout" onclick="clientLogin()">Client Portal ↗</button></header><div class="content" id="teamcontent">${dashboard()}</div></main>`}
+function dashboard(){return `<div class="hero"><div><h2>Daily Reporting Control Center</h2><p>Upload once — R XERO automatically publishes the report to the client portal.</p></div><button class="primary" onclick="upload()">＋ Add Report</button></div><div class="grid"><div class="card kpi"><span>Active Clients</span><strong>${db.clients.length}</strong></div><div class="card kpi"><span>Reports Today</span><strong>${db.clients.reduce((n,c)=>n+c.reports.length,0)}</strong></div><div class="card kpi"><span>Pending</span><strong>0</strong></div><div class="card kpi"><span>Portal Sync</span><strong>100%</strong></div></div><div class="layout"><div class="section"><h3>Client Reporting Folders</h3><p>Every client has a separate reporting workspace.</p>${db.clients.map(c=>`<div class="client" onclick="openFolder('${c.id}')"><div class="folder">▰</div><div><strong>${c.name}</strong><small>${c.id} · ${c.email}</small></div><div class="right">${c.reports.length} reports →</div></div>`).join("")}</div><div class="section"><h3>Automatic Publishing</h3><p>Every team upload follows this flow.</p>${activity().slice(0,4).join("")}</div></div><div class="section" style="margin-top:17px"><h3>R XERO Automatic Portal Flow</h3><p>One upload from the team. Client portal updates automatically.</p><div class="flow"><div class="step"><b>01</b><strong>Team Upload</strong><span>Excel / PDF / CSV</span></div><div class="arrow">→</div><div class="step"><b>02</b><strong>R XERO</strong><span>Store & process</span></div><div class="arrow">→</div><div class="step"><b>03</b><strong>Auto Publish</strong><span>Client data updated</span></div><div class="arrow">→</div><div class="step"><b>04</b><strong>Client Portal</strong><span>Report available</span></div></div></div>`}
+function activity(){let a=[];db.clients.forEach(c=>c.reports.forEach(r=>a.push(`<div class="activity"><b>● Published</b> ${r.name}<br><small>${c.name} · ${r.date} · Client Portal updated</small></div>`)));return a.reverse()}
+function teamView(v){let title={dashboard:"Reporting Workspace",clients:"Client Folders",reports:"All Reports",activity:"Activity Log"}[v];document.getElementById("title").textContent=title;let c=document.getElementById("teamcontent");if(v==="dashboard")c.innerHTML=dashboard();if(v==="clients")c.innerHTML=`<div class="head"><div><h2>Client Folders</h2><p>Separate workspace for every client.</p></div><button class="primary" onclick="newClient()">＋ Create Client</button></div><div class="grid">${db.clients.map(c=>`<div class="card"><div class="folder">▰</div><h3 style="margin-top:12px">${c.name}</h3><p style="font-size:10px;color:var(--muted)">${c.id} · ${c.email}</p><p style="font-size:10px">${c.reports.length} reports available</p><button class="primary" onclick="openFolder('${c.id}')">Open Folder</button></div>`).join("")}</div>`;if(v==="reports")c.innerHTML=allReports();if(v==="activity")c.innerHTML=`<div class="head"><div><h2>Activity Log</h2><p>Automatic publishing history.</p></div></div><div class="section">${activity().join("")}</div>`}
+function allReports(){let rows=[];db.clients.forEach(c=>c.reports.forEach(r=>rows.push(`<tr><td><b>${r.name}</b></td><td>${c.name}</td><td>${r.date}</td><td>${r.type}</td><td><span class="status">Published</span></td><td class="portal">● Available</td></tr>`)));return `<div class="head"><div><h2>All Reports</h2><p>Reports uploaded by your team.</p></div><button class="primary" onclick="upload()">＋ Add Report</button></div><div class="section" style="overflow:auto"><table class="table"><thead><tr><th>Report</th><th>Client</th><th>Date</th><th>Type</th><th>Status</th><th>Client Portal</th></tr></thead><tbody>${rows.join("")}</tbody></table></div>`}
+function openFolder(id){current=db.clients.find(c=>c.id===id);document.getElementById("title").textContent=current.name;document.getElementById("teamcontent").innerHTML=`<div class="head"><div><h2>▰ ${current.name}</h2><p>${current.id} · ${current.email}</p></div><button class="primary" onclick="upload()">＋ Add Report</button></div><div class="section"><div class="tabs"><button class="tab active">Daily Reports</button><button class="tab">Monthly</button><button class="tab">Sales</button><button class="tab">Purchase</button><button class="tab">Variance</button><button class="tab">Stock</button></div>${current.reports.map(r=>`<div class="file"><div><strong>${r.name}</strong><small>${r.date} · ${r.file}</small></div><span class="status">Published</span></div>`).join("")}</div>`}
+function upload(){let opts=db.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");document.body.insertAdjacentHTML("beforeend",`<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><h2>Upload & Publish Report</h2><p>Upload once from the Team Portal. R XERO will automatically publish it to the selected client's portal.</p><div class="field"><label>CLIENT FOLDER</label><select id="uc">${opts}</select></div><div class="field"><label>REPORT TYPE</label><select id="ut"><option>Daily Sales Report</option><option>Monthly Sales Report</option><option>Purchase Report</option><option>Profit & Loss</option><option>Variance Report</option><option>Stock Report</option></select></div><div class="field"><label>REPORT DATE</label><input id="ud" type="date" value="2026-09-24"></div><div class="field"><label>FILE</label><div class="drop"><input id="uf" type="file" accept=".xlsx,.xls,.csv,.pdf"></div></div><button class="primary full" onclick="saveUpload()">UPLOAD & AUTO PUBLISH</button></div></div>`);document.getElementById("modal").classList.add("show")}
+function saveUpload(){let c=db.clients.find(x=>x.id===document.getElementById("uc").value),f=document.getElementById("uf").files[0],t=document.getElementById("ut").value;if(!f){toast("Select a report file first");return}c.reports.unshift({name:t,date:"24-Sep-2026",type:t,file:f.name});closeModal();openFolder(c.id);toast("Report uploaded. Client portal updated automatically.");}
+function newClient(){document.body.insertAdjacentHTML("beforeend",`<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><h2>Create Client</h2><p>Creates a separate R XERO report folder and client portal identity.</p><div class="field"><label>CLIENT NAME</label><input id="cn" placeholder="Kundan Mishthan Bhandar"></div><div class="field"><label>CLIENT ID</label><input id="ci" placeholder="KMB001"></div><div class="field"><label>EMAIL</label><input id="ce" placeholder="client@email.com"></div><button class="primary full" onclick="saveClient()">CREATE CLIENT FOLDER</button></div></div>`);document.getElementById("modal").classList.add("show")}
+function saveClient(){let n=document.getElementById("cn").value,i=document.getElementById("ci").value,e=document.getElementById("ce").value;if(!n||!i){toast("Enter client name and ID");return}db.clients.push({id:i,name:n,email:e,reports:[]});closeModal();teamView("clients");toast("Client folder created");}
+function closeModal(){document.getElementById("modal")?.remove()}function toast(m){let t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+function clientLogin(){document.getElementById("app").innerHTML=`<div class="login"><div class="loginbox"><div class="logo"><b>R</b> R XERO</div><h1>Client Portal</h1><p>Login with your Client ID to view your reports.</p><div class="field"><label>CLIENT ID</label><input id="lid" value="KMB001"></div><div class="field"><label>PASSWORD</label><input type="password" value="demo123"></div><button class="primary full" onclick="clientHome()">LOGIN TO CLIENT PORTAL</button><div class="demo">Demo Client: KMB001 · Password: demo123</div><button class="full" style="border:0;background:none;color:var(--blue);cursor:pointer" onclick="role='team';render()">← Back to Team Portal</button></div></div>`}
+function clientHome(){let id=document.getElementById("lid").value.trim(),c=db.clients.find(x=>x.id===id);if(!c){toast("Client ID not found");return}current=c;document.getElementById("app").innerHTML=`<aside class="side"><div class="brand">R XERO<small>CLIENT PORTAL</small></div><div class="nav"><button class="active">▦ Dashboard</button><button>▤ Reports</button><button>◷ Analytics</button><button>✉ Queries</button></div><div class="sidebottom">${c.id}<br><br>${c.email}</div></aside><main class="main"><header class="top"><div><small>R XERO CLIENT PORTAL</small><h1>${c.name}</h1></div><button class="logout" onclick="render()">Logout</button></header><div class="content"><div class="clienthero"><small>CLIENT ID · ${c.id}</small><h2>${c.name}</h2><span>Reports published automatically by your reporting team</span></div><div class="grid"><div class="card kpi"><span>Total Reports</span><strong>${c.reports.length}</strong></div><div class="card kpi"><span>Latest Report</span><strong>${c.reports[0]?.date||"-"}</strong></div><div class="card kpi"><span>Portal Status</span><strong style="color:var(--green)">LIVE</strong></div><div class="card kpi"><span>New Today</span><strong>${c.reports.length?1:0}</strong></div></div><div class="section" style="margin-top:17px"><h3>Available Reports</h3><p>New reports appear here automatically after your reporting team publishes them.</p>${c.reports.map(r=>`<div class="file"><div><strong>${r.name}</strong><small>${r.date} · ${r.file}</small></div><button class="tab" onclick="toast('Opening ${r.name}')">VIEW</button></div>`).join("")}</div></div></main>`}
 render();
